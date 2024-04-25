@@ -1,19 +1,20 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.mozilla.rust-android-gradle.rust-android'
 }
 
 android {
     namespace 'xyz.multiprooflabs.bitcointee'
-    compileSdk 33
+    compileSdk rootProject.ext.targetSdk
 
     defaultConfig {
         applicationId "xyz.multiprooflabs.bitcointee"
-        minSdk 24
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
-
+        minSdk rootProject.ext.minSdk
+        targetSdk rootProject.ext.targetSdk
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        ndk.abiFilters rootProject.ext.ndkAbiFilters
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -32,13 +33,29 @@ android {
     }
 }
 
+cargo {
+    module  = "./jni"
+    libname = "wiring"
+    targets = ["arm"]
+    profile = "release"
+}
+
+tasks.whenTaskAdded { task ->
+    if ((task.name == 'javaPreCompileDebug' || task.name == 'javaPreCompileRelease')) {
+        task.dependsOn 'cargoBuild'
+    }
+}
+
 dependencies {
 
-    implementation project(path: ':common')
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.14.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'io.ktor:ktor-client-core:2.3.10'
+    implementation 'io.ktor:ktor-client-cio:2.3.10'
+    implementation 'io.ktor:ktor-client-websockets:2.3.10'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

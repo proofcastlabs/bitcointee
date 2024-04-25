@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "bitcointee"
 include ':app'
-include ':common'
