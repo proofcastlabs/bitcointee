@@ -11,6 +11,19 @@ use jni::{
 
 use super::JavaPointer;
 
+#[cfg(feature = "ethereum")]
+use ethereum_light_client::handle_input;
+
+#[cfg(feature = "bitcoin")]
+use bitcoin_light_client::handle_input;
+
+fn to_response(
+    env: &JNIEnv<'_>,
+    s: String
+) -> Result<*mut JavaPointer, AndroidJavaEntryError> {
+    Ok(env.new_string(s)?.into_inner())
+}
+
 #[cfg(feature = "file-logger")]
 fn call_rust_inner(
     env: &JNIEnv<'_>,
@@ -19,13 +32,7 @@ fn call_rust_inner(
     input: JString,
 ) -> Result<*mut JavaPointer, AndroidJavaEntryError> {
     init_logger()?;
-    unimplemented!("todo");
-
-    /*
-    State::new(env, strongbox_java_class, db_java_class, input)
-        .and_then(handle_websocket_message)
-        .and_then(|state| state.to_response())
-    */
+    to_response(env, handle_input(env.get_string(input)?.into()))
 }
 
 #[cfg(not(feature = "file-logger"))]
@@ -35,12 +42,7 @@ fn call_rust_inner(
     db_java_class: JObject,
     input: JString,
 ) -> Result<*mut JavaPointer, AndroidJavaEntryError> {
-    unimplemented!("todo");
-    /*
-    State::new(env, strongbox_java_class, db_java_class, input)
-        .and_then(handle_websocket_message)
-        .and_then(|state| state.to_response())
-    */
+    to_response(env, handle_input(env.get_string(input)?.into()))
 }
 
 // NOTE: This function accepts as its input a string from java, and returns similar.
@@ -55,7 +57,7 @@ pub extern "C" fn Java_multiprooflabs_tee_MainActivity_callRust(
     db_java_class: JObject, // FIXME rm!
     input: JString,
 ) -> jstring {
-    unimplemented!("todo");
+    unimplemented!("");
     /*
     let result = panic::catch_unwind(|| {
         match call_rust_inner(&env, strongbox_java_class, db_java_class, input) {

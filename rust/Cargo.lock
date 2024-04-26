@@ -37,7 +37,9 @@ name = "android_java_entry"
 version = "0.1.0"
 dependencies = [
  "android_logger",
+ "bitcoin",
  "derive-getters",
+ "ethereum",
  "file_logger",
  "hex",
  "jni",
@@ -120,6 +122,10 @@ dependencies = [
  "object",
  "rustc-demangle",
 ]
+
+[[package]]
+name = "bitcoin"
+version = "0.1.0"
 
 [[package]]
 name = "bumpalo"
@@ -236,6 +242,10 @@ dependencies = [
  "backtrace",
  "version_check",
 ]
+
+[[package]]
+name = "ethereum"
+version = "0.1.0"
 
 [[package]]
 name = "file_logger"

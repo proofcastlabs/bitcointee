@@ -2,8 +2,7 @@
 resolver = "2"
 
 members = [
-    "file_logger",
-    "android_java_entry",
+    "file_logger", "android_java_entry", "bitcoin", "ethereum",
 ]
 
 [workspace.dependencies]
