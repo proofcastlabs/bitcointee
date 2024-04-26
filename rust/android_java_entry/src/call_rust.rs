@@ -48,7 +48,7 @@ fn call_rust_inner(
 
 #[allow(non_snake_case)]
 #[no_mangle]
-pub extern "C" fn Java_com_androidapp_RustBridge_callRust(
+pub extern "C" fn Java_multiprooflabs_tee_MainActivity_callRust(
     env: JNIEnv,
     _class: JClass,
     strongbox_java_class: JObject, // FIXME rm1

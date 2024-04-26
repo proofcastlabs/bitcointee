@@ -24,7 +24,7 @@ fn parse_java_log<'a>(env: &'a JNIEnv<'a>, log_level: JString, log_msg: JString)
 
 #[allow(non_snake_case)]
 #[no_mangle]
-pub extern "C" fn Java_com_androidapp_rustlogger_RustLogger_log(
+pub extern "C" fn Java_multiprooflabs_tee_RustLogger_log(
     env: JNIEnv,
     _class: JClass,
     log_level: JString,

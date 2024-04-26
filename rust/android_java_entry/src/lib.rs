@@ -18,7 +18,7 @@ use self::{
 
 pub use self::{
     error::AndroidJavaEntryError,
-    // NOTE: The following two function names _must_ be reflected correctly in the java app via class names/paths
-    call_rust::Java_com_androidapp_RustBridge_callRust,
-    rust_java_log::Java_com_androidapp_rustlogger_RustLogger_log,
+    // NOTE: Thkhe following two function names _must_ be reflected correctly in the java app via class names/paths
+    call_rust::Java_multiprooflabs_tee_MainActivity_callRust,
+    rust_java_log::Java_multiprooflabs_tee_RustLogger_log,
 };
