@@ -33,6 +33,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
 
 [[package]]
+name = "android_java_entry"
+version = "0.1.0"
+dependencies = [
+ "android_logger",
+ "derive-getters",
+ "file_logger",
+ "hex",
+ "jni",
+ "log",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "android_log-sys"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -316,21 +331,6 @@ name = "itoa"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49f1f14873335454500d59611f1cf4a4b0f786f9ac11f4312a78e4cf2566695b"
-
-[[package]]
-name = "java_entry"
-version = "0.1.0"
-dependencies = [
- "android_logger",
- "derive-getters",
- "file_logger",
- "hex",
- "jni",
- "log",
- "serde",
- "serde_json",
- "thiserror",
-]
 
 [[package]]
 name = "jni"

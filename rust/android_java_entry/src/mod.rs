@@ -12,7 +12,7 @@ use self::{
 };
 
 pub use self::{
-    error::JavaEntryAndroidError,
+    error::AndroidJavaEntryError,
     call_core::Java_com_androidapp_RustBridge_callCore,
     rust_java_log::Java_com_androidapp_rustlogger_RustLogger_log,
 };

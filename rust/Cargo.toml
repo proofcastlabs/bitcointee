@@ -2,8 +2,8 @@
 resolver = "2"
 
 members = [
-    "java_entry",
     "file_logger",
+    "android_java_entry",
 ]
 
 [workspace.dependencies]

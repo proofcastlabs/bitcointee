@@ -1,4 +1,4 @@
-use crate::JavaEntryAndroidError;
+use crate::AndroidJavaEntryError;
 use std::panic;
 
 #[cfg(feature = "file-logger")]
@@ -17,7 +17,7 @@ fn call_core_inner(
     strongbox_java_class: JObject,
     db_java_class: JObject,
     input: JString,
-) -> Result<*mut JavaPointer, JavaEntryAndroidError> {
+) -> Result<*mut JavaPointer, AndroidJavaEntryError> {
     init_logger()?;
     unimplemented!("todo");
 
@@ -34,7 +34,7 @@ fn call_core_inner(
     strongbox_java_class: JObject,
     db_java_class: JObject,
     input: JString,
-) -> Result<*mut JavaPointer, JavaEntryAndroidError> {
+) -> Result<*mut JavaPointer, AndroidJavaEntryError> {
     unimplemented!("todo");
     /*
     State::new(env, strongbox_java_class, db_java_class, input)

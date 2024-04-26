@@ -1,0 +1,24 @@
+#![cfg(target_os = "android")]
+
+#[macro_use]
+extern crate log;
+
+mod call_core;
+mod constants;
+mod handle_java_exceptions;
+mod jni_on_load;
+mod error;
+mod rust_java_log;
+mod type_aliases;
+
+use self::{
+    handle_java_exceptions::check_and_handle_java_exceptions,
+    type_aliases::JavaPointer,
+};
+
+pub use self::{
+    error::AndroidJavaEntryError,
+    // NOTE: The following two function names _must_ be reflected correctly in the java app via class names/paths
+    call_core::Java_com_androidapp_RustBridge_callCore,
+    rust_java_log::Java_com_androidapp_rustlogger_RustLogger_log,
+};

@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum JavaEntryAndroidError {
+pub enum AndroidJavaEntryError {
     #[error("a java exception occurred and was handled - see logs for details")]
     JavaExceptionOccurred,
 
