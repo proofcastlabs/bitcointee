@@ -38,6 +38,7 @@ cargo {
     libname = "wiring"
     targets = ["arm"]
     profile = "release"
+    features { defaultAnd("bitcoin") }
 }
 
 tasks.whenTaskAdded { task ->
