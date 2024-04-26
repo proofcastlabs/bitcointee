@@ -4,18 +4,18 @@ use std::panic;
 #[cfg(feature = "file-logger")]
 use file_logger::init_logger;
 use jni::{
-    objects::{JClass, JObject, JString},
+    objects::{JClass, JString},
     sys::jstring,
     JNIEnv,
 };
-
-use super::JavaPointer;
 
 #[cfg(feature = "ethereum")]
 use ethereum_light_client::handle_input;
 
 #[cfg(feature = "bitcoin")]
 use bitcoin_light_client::handle_input;
+
+type JavaPointer = jni::sys::_jobject;
 
 fn to_response(
     env: &JNIEnv<'_>,
@@ -27,8 +27,6 @@ fn to_response(
 #[cfg(feature = "file-logger")]
 fn call_rust_inner(
     env: &JNIEnv<'_>,
-    strongbox_java_class: JObject,
-    db_java_class: JObject,
     input: JString,
 ) -> Result<*mut JavaPointer, AndroidJavaEntryError> {
     init_logger()?;
@@ -38,8 +36,6 @@ fn call_rust_inner(
 #[cfg(not(feature = "file-logger"))]
 fn call_rust_inner(
     env: &JNIEnv<'_>,
-    strongbox_java_class: JObject,
-    db_java_class: JObject,
     input: JString,
 ) -> Result<*mut JavaPointer, AndroidJavaEntryError> {
     to_response(env, handle_input(env.get_string(input)?.into()))
@@ -53,69 +49,20 @@ fn call_rust_inner(
 pub extern "C" fn Java_multiprooflabs_tee_MainActivity_callRust(
     env: JNIEnv,
     _class: JClass,
-    strongbox_java_class: JObject, // FIXME rm1
-    db_java_class: JObject, // FIXME rm!
     input: JString,
 ) -> jstring {
-    unimplemented!("");
-    /*
-    let result = panic::catch_unwind(|| {
-        match call_rust_inner(&env, strongbox_java_class, db_java_class, input) {
+    // NOTE See here for the catch_unwind: https://doc.rust-lang.org/std/panic/fn.catch_unwind.html
+    // Relevant bit: > It is currently undefined behavior to unwind from Rust code into foreign code,
+    // so this function is particularly useful when Rust is called from another language (normally C).
+    // This can run arbitrary Rust code, capturing a panic and allowing a graceful handling of the error.
+    panic::catch_unwind(|| {
+        match call_rust_inner(&env, input) {
             Ok(r) => r,
             Err(e) => {
                 error!("{e}");
-
-                // First we need to cancel the db transaction...
-                match env.call_method(db_java_class, "cancelTransaction", "()V", &[]) {
-                    Ok(_) => {
-                        env.exception_describe().expect("this not to fail"); // FIXME
-                        env.exception_clear().expect("this not to fail"); // FIXME How to handle if an exception
-                                                                          // occurred here? Do we return anything?
-                    },
-                    Err(e) => {
-                        // FIXME check for java exceptions!
-                        error!("{e}");
-                        let r: String = match WebSocketMessagesEncodable::Error(WebSocketMessagesError::JavaDb(
-                            "could not cancel db tx".into(),
-                        ))
-                        .try_into()
-                        {
-                            Ok(s) => s,
-                            Err(e) => {
-                                error!("{e}");
-                                format!("{e}")
-                            },
-                        };
-                        return env
-                            .new_string(r.to_string())
-                            .expect("this should not fail")
-                            .into_inner();
-                    },
-                };
-
-                // NOTE: Now we need to handle whatever went wrong. Lets wrap the error in an encodable websocket
-                // message and return it to the caller.
-                let r: String = match WebSocketMessagesEncodable::Error(e.into()).try_into() {
-                    Ok(s) => s,
-                    Err(e) => {
-                        error!("error encoding error into WebsocketMessagesEncodable: {e}");
-                        format!("{e}")
-                    },
-                };
-                env.new_string(r.to_string())
-                    .expect("this should not fail")
-                    .into_inner()
+                // NOTE: Convert the error to a response to return to the caller
+                to_response(&env, e.to_string()).expect("this should not fail")
             },
         }
-    });
-    match result {
-        Ok(r) => r,
-        Err(e) => {
-            error!("something panicked: {e:?}");
-            let msg = WebSocketMessagesEncodable::Error(WebSocketMessagesError::Panicked);
-            let s: String = msg.try_into().expect("this not to fail");
-            env.new_string(s).expect("this should not fail").into_inner()
-        },
-    }
-    */
+    }).expect("this not to fail")
 }

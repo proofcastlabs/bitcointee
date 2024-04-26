@@ -4,17 +4,9 @@
 extern crate log;
 
 mod call_rust;
-mod constants;
-mod handle_java_exceptions;
 mod jni_on_load;
 mod error;
 mod rust_java_log;
-mod type_aliases;
-
-use self::{
-    handle_java_exceptions::check_and_handle_java_exceptions,
-    type_aliases::JavaPointer,
-};
 
 pub use self::{
     error::AndroidJavaEntryError,
