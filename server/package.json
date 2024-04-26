@@ -10,7 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
+    "jsonrpc-lite": "^2.2.0",
+    "log4js": "^6.9.1",
+    "ramda": "^0.29.1",
     "ws": "^8.16.0"
   }
 }

@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                     Log.i(TAG, "ws msg: ${msg.readText()}")
                     val myMessage = readlnOrNull()
                     if(myMessage != null) {
+                        Log.i(TAG, "Sending back response")
                         send(myMessage)
                     }
                 }

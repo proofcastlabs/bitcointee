@@ -1,28 +1,37 @@
-const { WebSocketServer } = require('ws')
+#!/usr/bin/env node
+const { RPC_PORT } = require('./config')
+const { getApp } = require('./lib/express-app')
+const { logger, shutDownLogging } = require('./lib/get-logger')
+const { awaitWsInstance } = require('./lib/get-ws-instance')
+const { exitCleanly, setupExitEventListeners } = require('./lib/setup-exit-listeners')
 
-const createWebSocketServer = (_port = 3000) =>
-  Promise.resolve(new WebSocketServer({ port: _port }))
-    .then(_wss => {
-        _wss.on('connection', _ws => {
-          console.log('Server: connected')
-          // _ws.on('message', (_data) => {
-          //   const msg = Buffer.from("Hello world!").toString()
-          //   console.log('Server: sending', Buffer.from(_data).toString())
-          //   _ws.send(_data)
-          // })
-          _ws.on('close', () => {
-            console.log('Server: closed')
-          })
+const EXECUTION_MODE_LOG = `Starting server in ${
+  process.env.NODE_ENV === 'production'
+    ? '\'production\' mode'
+    : '\'development\' mode (stack trace could be returned to the client if an error occurs)'
+}`
 
-          _ws.send('hello world!')
+const startListening = _app =>
+  logger.warn(EXECUTION_MODE_LOG) ||
+  logger.info(`Server listening on port ${RPC_PORT}`) ||
+  _app.listen(RPC_PORT)
 
-          _ws.on('message', (_data) => {
-            console.log(`Just received {}`, _data)
-          })
-        })
-        return _wss
-      })
+const printErrorAndExit = _err =>
+  logger.error('Halting the server due to \n', _err) ||
+   shutDownLogging()
+     .then(_ => exitCleanly(1))
 
 
+const wsMessageHandlerHook = (_msg) => {
+  logger.info('Websocket: message received!')
+  logger.info(_msg)
+}
 
-createWebSocketServer()
+const main = () =>
+  setupExitEventListeners()
+    .then(_ => awaitWsInstance(wsMessageHandlerHook))
+    .then(getApp)
+    .then(startListening)
+    .catch(printErrorAndExit)
+
+main()
