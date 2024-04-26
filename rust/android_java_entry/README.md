@@ -1,4 +1,4 @@
-### :alien: Rationale
+### :thinking: Rationale
 
 This small library is designed to work with an android device, allowing it to interface with rust in a generic way. It exposes two functions that can be wired into the android app. They are: `Java_com_androidapp_rustlogger_RustLogger_log` and `Java_com_androidapp_RustBridge_callRust`.
 
@@ -25,3 +25,17 @@ TARGET_CC="$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-and
 TARGET_AR="$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar" \
 cargo build --release
 ```
+
+### :loudspeaker: Features
+
+When building this library you _must_ define which light client to use via the features flag, eg `--features=bitcoin`. If you don't you will see an error like the following:
+
+```
+error[E0425]: cannot find function `handle_input` in this scope
+  --> android_java_entry/src/call_rust.rs:41:22
+   |
+41 |     to_response(env, handle_input(env.get_string(input)?.into()))
+   |                      ^^^^^^^^^^^^ not found in this scope
+```
+
+You also cannot build the library with more than one light client. Other features can be combined as usual.
