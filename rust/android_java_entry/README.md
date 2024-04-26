@@ -1,3 +1,15 @@
+### :alien: Rationale
+
+This small library is designed to work with an android device, allowing it to interface with rust in a generic way. It exposes two functions that can be wired into the android app. They are: `Java_com_androidapp_rustlogger_RustLogger_log` and `Java_com_androidapp_RustBridge_callRust`.
+
+__`Java_com_androidapp_rustlogger_RustLogger_log`__
+
+This function allows java logs to be piped through to rust, allowing java logs to also accrue into whatever logging system you're using for the rust side of things. This avoids having to track both android device logs (via logcat or similar) _and_ rust logs, instead the latter will also contain the former.
+
+__`Java_com_androidapp_RustBridge_callRust`__
+
+This function is the entry point into rust from java. Java should call this function providing a string argument. The function returns to java a string also.
+
 ### :wrench: Building
 
 This library by default targets `aarch64-linux-android`. (See `./.cargo/config.toml`)
