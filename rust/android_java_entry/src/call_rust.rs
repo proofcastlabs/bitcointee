@@ -12,7 +12,7 @@ use jni::{
 use super::JavaPointer;
 
 #[cfg(feature = "file-logger")]
-fn call_core_inner(
+fn call_rust_inner(
     env: &JNIEnv<'_>,
     strongbox_java_class: JObject,
     db_java_class: JObject,
@@ -29,7 +29,7 @@ fn call_core_inner(
 }
 
 #[cfg(not(feature = "file-logger"))]
-fn call_core_inner(
+fn call_rust_inner(
     env: &JNIEnv<'_>,
     strongbox_java_class: JObject,
     db_java_class: JObject,
@@ -43,24 +43,22 @@ fn call_core_inner(
     */
 }
 
-// FIXME Important! The java db is NOT single threaded! We need a shim here to intercept errors
-// (whilst we still have the ability to callback to the java db stuff), and in the case of errors
-// here where the db tx is never ended (as it shouldn't be in the case of errors), we need to call
-// something to clean up the flags in the java db impl to allow new txs to be started.
+// NOTE: This function accepts as its input a string from java, and returns similar.
+// TODO/FIXME: Would be more efficient to update this to take and return bytes.
 
 #[allow(non_snake_case)]
 #[no_mangle]
-pub extern "C" fn Java_com_androidapp_RustBridge_callCore(
+pub extern "C" fn Java_com_androidapp_RustBridge_callRust(
     env: JNIEnv,
     _class: JClass,
-    strongbox_java_class: JObject,
-    db_java_class: JObject,
+    strongbox_java_class: JObject, // FIXME rm1
+    db_java_class: JObject, // FIXME rm!
     input: JString,
 ) -> jstring {
     unimplemented!("todo");
     /*
     let result = panic::catch_unwind(|| {
-        match call_core_inner(&env, strongbox_java_class, db_java_class, input) {
+        match call_rust_inner(&env, strongbox_java_class, db_java_class, input) {
             Ok(r) => r,
             Err(e) => {
                 error!("{e}");

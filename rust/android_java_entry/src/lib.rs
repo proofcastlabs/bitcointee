@@ -3,7 +3,7 @@
 #[macro_use]
 extern crate log;
 
-mod call_core;
+mod call_rust;
 mod constants;
 mod handle_java_exceptions;
 mod jni_on_load;
@@ -19,6 +19,6 @@ use self::{
 pub use self::{
     error::AndroidJavaEntryError,
     // NOTE: The following two function names _must_ be reflected correctly in the java app via class names/paths
-    call_core::Java_com_androidapp_RustBridge_callCore,
+    call_rust::Java_com_androidapp_RustBridge_callRust,
     rust_java_log::Java_com_androidapp_rustlogger_RustLogger_log,
 };
