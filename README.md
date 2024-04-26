@@ -23,9 +23,8 @@ rust.cargoCommand=/<home>/.cargo/bin/cargo
 
 ```bash
 ./setup-plugdev-perm.sh
+./gradlew clean assembleDebug installDebug
 adb reverse tcp:3000 tcp:3000
-./gradlew clean assembleDebug
-./gradlew installDebug
 ```
 
 ## Run

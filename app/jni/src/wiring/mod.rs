@@ -11,12 +11,12 @@ pub extern "system" fn JNI_OnLoad(_vm: JavaVM) -> jint {
 
 #[allow(non_snake_case)]
 #[no_mangle]
-pub extern "system" fn Java_xyz_multiproofslabs_MainActivity_callCore<'local>(
+pub extern "system" fn Java_xyz_multiprooflabs_bitcointee_MainActivity_callCore<'local>(
     mut env: JNIEnv<'local>,
     _class: JClass<'local>,
     input: JString<'local>,
 ) -> jstring {
     let input: String = env.get_string(&input).expect("Couldn't get java string!").into();
 
-    env.new_string(format!("{}", input)).expect("couldn't create JAVA string").into_raw()
+    env.new_string(format!("In rust we trust! {}", input)).expect("couldn't create JAVA string").into_raw()
 }

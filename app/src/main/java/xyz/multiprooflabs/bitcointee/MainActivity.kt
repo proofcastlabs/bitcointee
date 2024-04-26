@@ -40,12 +40,12 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "Websocket connected")
                 while (true) {
                     val msg = incoming.receive() as? Frame.Text ?: continue
-                    Log.i(TAG, "ws msg: ${msg.readText()}")
-                    val myMessage = readlnOrNull()
-                    if(myMessage != null) {
-                        Log.i(TAG, "Sending back response")
-                        send(myMessage)
-                    }
+                    val txt = msg.readText()
+                    Log.i(TAG, "ws msg: $txt")
+                    val myMessage = callCore("ciao")
+                    Log.i(TAG, "Sending $myMessage")
+                    send(myMessage)
+                    Log.i(TAG, "Sent!")
                 }
             }
         }

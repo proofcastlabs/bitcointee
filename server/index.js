@@ -21,15 +21,9 @@ const printErrorAndExit = _err =>
    shutDownLogging()
      .then(_ => exitCleanly(1))
 
-
-const wsMessageHandlerHook = (_msg) => {
-  logger.info('Websocket: message received!')
-  logger.info(_msg)
-}
-
 const main = () =>
   setupExitEventListeners()
-    .then(_ => awaitWsInstance(wsMessageHandlerHook))
+    .then(_ => awaitWsInstance())
     .then(getApp)
     .then(startListening)
     .catch(printErrorAndExit)

@@ -3,7 +3,6 @@ const blocks = require('../../../blocks')
 const { jsonRpcSuccess } = require('../../jsonrpc-utils')
 const { rejectIfNil } = require('../../ramda-utils')
 
-console.log('blocks:', blocks)
 const wsSend = (_ws, _payload) =>
     Promise.resolve(_ws.send(_payload))
 
@@ -13,12 +12,9 @@ const getPayload = _blocks =>
 const getBlocks = (_block1, _block2) =>
     Promise.reject(new Error('Not implemented'))
 
-const generateProof = (_ws, _block1, _block2) =>
-  // getBlocks(_block1, _block2)
-    // .then(getPayload)
-    // .then(_ => wsSend(_ws, PAYLOAD))
-    wsSend(_ws, JSON.stringify(blocks))
-    .then(_ => "hello")
+const generateProof = (_wsInstance, _block1, _block2) =>
+  _wsInstance.send(blocks)
+
 
 
 module.exports.jsonRpcGenerateProof = (_ws, _req, _res, _next) =>
