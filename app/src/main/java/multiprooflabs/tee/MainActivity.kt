@@ -1,17 +1,17 @@
-package xyz.multiprooflabs.bitcointee
+package multiprooflabs.tee
 
 import android.os.Bundle
 import android.util.Log
 import kotlinx.coroutines.runBlocking
 import androidx.appcompat.app.AppCompatActivity
-import xyz.multiprooflabs.bitcointee.security.Strongbox
+import multiprooflabs.tee.security.Strongbox
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.websocket.*
 
 class MainActivity : AppCompatActivity() {
-    private external fun callCore(input: String): String
+    private external fun callRust(input: String): String
 
     var strongbox: Strongbox? = null
     var client: HttpClient? = null
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                     val msg = incoming.receive() as? Frame.Text ?: continue
                     val txt = msg.readText()
                     Log.i(TAG, "ws msg: $txt")
-                    val myMessage = callCore("ciao")
+                    val myMessage = callRust("ciao")
                     Log.i(TAG, "Sending $myMessage")
                     send(myMessage)
                     Log.i(TAG, "Sent!")

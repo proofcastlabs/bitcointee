@@ -1,4 +1,4 @@
-package xyz.multiprooflabs.bitcointee.security;
+package multiprooflabs.tee.security;
 
 public class StrongboxException extends Exception {
     @SuppressWarnings("unused")

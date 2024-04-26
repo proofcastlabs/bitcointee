@@ -5,5 +5,5 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.Bitcointee" parent="Base.Theme.Bitcointee" />
+    <style name="Theme.Tee" parent="Base.Theme.Bitcointee" />
 </resources>

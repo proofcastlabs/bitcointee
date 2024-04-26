@@ -11,7 +11,7 @@ pub extern "system" fn JNI_OnLoad(_vm: JavaVM) -> jint {
 
 #[allow(non_snake_case)]
 #[no_mangle]
-pub extern "system" fn Java_xyz_multiprooflabs_bitcointee_MainActivity_callCore<'local>(
+pub extern "system" fn Java_multiprooflabs_tee_MainActivity_callRust<'local>(
     mut env: JNIEnv<'local>,
     _class: JClass<'local>,
     input: JString<'local>,

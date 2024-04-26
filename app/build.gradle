@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'xyz.multiprooflabs.bitcointee'
+    namespace 'multiprooflabs.tee'
     compileSdk rootProject.ext.targetSdk
 
     defaultConfig {
-        applicationId "xyz.multiprooflabs.bitcointee"
+        applicationId "multiprooflabs.tee"
         minSdk rootProject.ext.minSdk
         targetSdk rootProject.ext.targetSdk
         versionCode rootProject.ext.versionCode

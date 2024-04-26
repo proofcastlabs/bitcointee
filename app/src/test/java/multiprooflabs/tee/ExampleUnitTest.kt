@@ -1,4 +1,4 @@
-package xyz.multiprooflabs.bitcointee
+package multiprooflabs.tee
 
 import org.junit.Test
 

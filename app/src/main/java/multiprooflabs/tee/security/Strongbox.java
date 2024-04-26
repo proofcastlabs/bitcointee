@@ -1,4 +1,4 @@
-package xyz.multiprooflabs.bitcointee.security;
+package multiprooflabs.tee.security;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
