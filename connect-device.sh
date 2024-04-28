@@ -10,3 +10,4 @@
 lsusb | grep -i google | awk '{print "/dev/bus/usb/"$2"/"$4}' | tr -d ':' | xargs sudo chown "$USER:plugdev"
 adb kill-server
 adb devices
+adb reverse tcp:3000 tcp:3000

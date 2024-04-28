@@ -22,7 +22,7 @@ rust.cargoCommand=/<home>/.cargo/bin/cargo
 ### Build the app and install
 
 ```bash
-./setup-plugdev-perm.sh
+./connect-device.sh
 ./gradlew clean assembleDebug installDebug
 adb reverse tcp:3000 tcp:3000
 ```
