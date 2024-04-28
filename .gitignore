@@ -40,3 +40,5 @@ keystore*
 !gradle/wrapper/*.jar
 
 /rust/target
+
+.nx

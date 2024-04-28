@@ -1,7 +1,11 @@
 const R = require('ramda')
+const schemas = require('../../schemas')
 const blocks = require('../../../blocks')
-const { jsonRpcSuccess } = require('../../jsonrpc-utils')
+const { validateJson } = require('../../ajv-utils')
 const { rejectIfNil } = require('../../ramda-utils')
+const { jsonRpcSuccess } = require('../../jsonrpc-utils')
+const { verifyAndroidProof } = require('./verify-android-proof')
+const { KEY_VALUE } = require('../../schemas/keys')
 
 const wsSend = (_ws, _payload) =>
     Promise.resolve(_ws.send(_payload))
@@ -14,6 +18,11 @@ const getBlocks = (_block1, _block2) =>
 
 const generateProof = (_wsInstance, _block1, _block2) =>
   _wsInstance.send(blocks)
+    .then(JSON.parse)
+    .then(validateJson(schemas.proof))
+    .then(R.prop(KEY_VALUE))
+    .then(verifyAndroidProof)
+
 
 
 
