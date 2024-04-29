@@ -79,22 +79,14 @@ class TrustedExecutor(private val isStrongboxBacked: Boolean) {
         }
     }
 
-    fun getCertificateAttestation(alias: String): String {
+    fun getCertificateAttestation(alias: String): ByteArray {
         val ks = maybeGenerateNewKeyPairAndGetKeyStore(alias)
         val certificateChain = ks.getCertificateChain(alias)
-        val leaf = certificateChain[0].encoded.toBase64String()
-        val intermediate = certificateChain[1].encoded.toBase64String()
-        val root = certificateChain[2].encoded.toBase64String()
+        val leaf = certificateChain[0].encoded
+        val intermediate = certificateChain[1].encoded
+        val root = certificateChain[2].encoded
 
-        return AttestationCertificate(leaf, intermediate, root).toJson()
-//        val attestationCertificate = AttestationCertificate(leaf, intermediate, root)
-//        val cborFactory = CBORFactory()
-//        val mapper = ObjectMapper(cborFactory)
-//        val data = mapper.writeValueAsBytes(attestationCertificate)
-//        val outputStream = ByteArrayOutputStream()
-//        outputStream.write(data)
-//
-//        return outputStream.toByteArray()
+        return AttestationCertificate(leaf, intermediate, root).toCbor()
     }
 
     fun getAttestationKeyPublicKey() = getPublicKey(aliasAttestationKey)

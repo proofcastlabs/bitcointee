@@ -5,7 +5,7 @@ import kotlinx.serialization.cbor.ByteString
 
 @Serializable
 data class AttestationCertificate(
-    val leaf: String,
-    val intermediate: String,
-    val root: String,
+    val leaf: ByteArray,
+    val intermediate: ByteArray,
+    val root: ByteArray,
 )

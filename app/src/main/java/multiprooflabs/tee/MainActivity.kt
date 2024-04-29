@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                     val commitment = result.toBase64String()
                     val signature = tee!!.signWithAttestationKey(result).toBase64String()
                     val publicKey = tee!!.getAttestationKeyPublicKey().encoded.toBase64String()
-                    val certChain = tee!!.getCertificateAttestation()
+                    val certChain = tee!!.getCertificateAttestation().toBase64String()
 
                     val digest = Utils.getAppSHA256Digest(applicationContext)
                     Log.i(TAG, "pub key format ${tee!!.getAttestationKeyPublicKey().format}") // HEEERE
