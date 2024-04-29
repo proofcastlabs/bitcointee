@@ -3,7 +3,7 @@ use crate::{
     error::BtcError,
 };
 
-use std::{hash::Hash, str::FromStr};
+use std::str::FromStr;
 
 pub fn validate_input(s: String) -> Result<String, BtcError> {
     let blocks = BtcBlocks::from_str(&s).expect("to unwrap btc blocks");

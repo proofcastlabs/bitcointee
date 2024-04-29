@@ -1,5 +1,5 @@
 use crate::{
-    btc_block_json::{BtcBlockJson, BtcBlockJsons},
+    btc_block_json::BtcBlockJsons,
     BtcError,
 };
 use bitcoin::blockdata::block::Block as BtcBlock;
