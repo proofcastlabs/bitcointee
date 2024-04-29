@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-const { RPC_PORT } = require('./config')
+const config = require('./config')
 const { getApp } = require('./lib/express-app')
 const { logger, shutDownLogging } = require('./lib/get-logger')
 const { awaitWsInstance } = require('./lib/get-ws-instance')
+const { KEY_PORT_RPC } = require('./lib/schemas/keys')
 const { exitCleanly, setupExitEventListeners } = require('./lib/setup-exit-listeners')
 
 const EXECUTION_MODE_LOG = `Starting server in ${
@@ -11,10 +12,12 @@ const EXECUTION_MODE_LOG = `Starting server in ${
     : '\'development\' mode (stack trace could be returned to the client if an error occurs)'
 }`
 
-const startListening = _app =>
-  logger.warn(EXECUTION_MODE_LOG) ||
-  logger.info(`Server listening on port ${RPC_PORT}`) ||
-  _app.listen(RPC_PORT)
+const startListening = _app => {
+  const port = config[KEY_PORT_RPC]
+  return logger.warn(EXECUTION_MODE_LOG) ||
+  logger.info(`Server listening on port ${port}`) ||
+  _app.listen(port)
+}
 
 const printErrorAndExit = _err =>
   logger.error('Halting the server due to \n', _err) ||

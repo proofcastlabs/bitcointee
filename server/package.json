@@ -14,6 +14,7 @@
     "@noble/curves": "^1.4.0",
     "ajv": "^8.12.0",
     "ajv-formats": "^3.0.1",
+    "bitcoin-core": "^4.2.0",
     "cbor": "^9.0.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
@@ -33,6 +34,8 @@
     "bail": true,
     "verbose": true,
     "transform": {},
-    "setupFilesAfterEnv": ["./test/jest.setup.js"]
+    "setupFilesAfterEnv": [
+      "./test/jest.setup.js"
+    ]
   }
 }

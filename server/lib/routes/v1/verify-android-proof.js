@@ -14,15 +14,7 @@ const verifyCommitmentSignature = _proof =>
   .then(_ => _proof)
 
 
-
-
-
-
 module.exports.verifyAndroidProof = _proof =>
   validateJson(schemas.proofAndroid, _proof)
     .then(verifyCommitmentSignature)
     .then(_ => _proof)
-
-
-    // .then(verifyAttestationCertificateChain)
-    // .then(verifyApkCertificateHash)

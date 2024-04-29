@@ -30,9 +30,16 @@ const importAsync = R.memoizeWith(R.identity, async (_lib, _name) => {
   })
 })
 
+const rejectIfGt = R.curry((_err, _a, _b) =>
+  R.gt(_a, _b)
+    ? Promise.reject(createErrorFromAnything(_err))
+    : Promise.resolve()
+)
+
 
 module.exports = {
   mapAll,
+  rejectIfGt,
   importAsync,
   rejectIfNil,
 }

@@ -2,6 +2,7 @@ const cors = require('cors')
 const express = require('express')
 const { prop, curry, } = require('ramda')
 const { logger } = require('./get-logger')
+const { ERROR_SERVER_ERROR } = require('./errors')
 
 const logRequestInfo = (_req, _res, _next) => {
   const headers = prop('headers', _req)
@@ -47,7 +48,7 @@ const applyRoutesToApp = curry((_routes, _app) => {
 const defaultErrorHandler = (_err, _req, _res, _next) => {
   logger.warn('Default error handler')
   logger.error(_err)
-  _res.status(500).send({})
+  _res.send(ERROR_SERVER_ERROR)
 }
 
 const applyDefaultErrorHandler = _app => {
