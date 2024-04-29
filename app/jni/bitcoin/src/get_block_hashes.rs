@@ -1,4 +1,4 @@
-use crate::{curl, BtcError, JsonResponse};
+use crate::{curl::curl, BtcError, json_response::JsonResponse};
 use bitcoin::{hashes::Hash, BlockHash};
 use futures::{stream, Future, Stream, StreamExt};
 use serde_json::json;

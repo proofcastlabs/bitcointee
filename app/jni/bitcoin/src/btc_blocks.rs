@@ -45,7 +45,7 @@ impl FromStr for BtcBlocks {
     type Err = BtcError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let js: BtcBlockJsons = serde_json::from_str(&s)?;
+        let js: BtcBlockJsons = serde_json::from_str(s)?;
         Self::try_from(js)
     }
 }

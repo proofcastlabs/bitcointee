@@ -3,8 +3,17 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum BtcError {
+    #[error("no last block in blocks")]
+    NoLastBlock,
+
+    #[error("validation error - check logs for details")]
+    ValidationError,
+
     #[error("cannot get block with hash: {0}")]
     NoBlock(bitcoin::BlockHash),
+
+    #[error("no blocks were passed in")]
+    NoBlocks,
 
     #[error("hex array error: {0}")]
     HexArray(#[from] bitcoin::hex::HexToArrayError),
