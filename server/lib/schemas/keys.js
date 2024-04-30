@@ -13,4 +13,7 @@ module.exports = {
   KEY_SIGNATURE: 'signature',
   KEY_PUBLICKEY: 'publicKey',
   KEY_CERTIFICATECHAIN: 'certificateChain',
+  KEY_ID: 'id',
+  KEY_DEVICE: 'device',
+  KEY_PACKAGE_NAME: 'package',
 }

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 const config = require('./config')
 const { getApp } = require('./lib/express-app')
-const { logger, shutDownLogging } = require('./lib/get-logger')
+const { startDeviceApp } = require('./lib/adb-utils')
 const { awaitWsInstance } = require('./lib/get-ws-instance')
-const { KEY_PORT_RPC } = require('./lib/schemas/keys')
+const { logger, shutDownLogging } = require('./lib/get-logger')
 const { exitCleanly, setupExitEventListeners } = require('./lib/setup-exit-listeners')
+const { KEY_PORT_RPC } = require('./lib/schemas/keys')
 
 const EXECUTION_MODE_LOG = `Starting server in ${
   process.env.NODE_ENV === 'production'
@@ -26,8 +27,13 @@ const printErrorAndExit = _err =>
 
 const main = () =>
   setupExitEventListeners()
-    .then(_ => awaitWsInstance())
-    .then(getApp)
+    .then(_ =>
+      Promise.all([
+        awaitWsInstance(),
+        startDeviceApp(),
+      ])
+    )
+    .then(([_ws]) => getApp(_ws))
     .then(startListening)
     .catch(printErrorAndExit)
 

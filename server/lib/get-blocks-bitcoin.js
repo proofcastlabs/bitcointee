@@ -19,7 +19,7 @@ const getBlocksBatch = _blocksHashes =>
     .map(_x => { _x.parameters.push(2); return _x }) // Verbosity 2
 
 const getBlocksFromBtcClient = R.curry(async (_block1, _block2, _client) => {
-  logger.debug(`Downloading blocks in the interval [${_block1}, ${_block2}]`)
+  logger.debug(`Downloading BTC blocks in the interval [${_block1}, ${_block2}]`)
   const blockHashes = await _client.command(getBlockHashesBatch(_block1, _block2))
   return await _client.command(getBlocksBatch(blockHashes))
 })

@@ -54,6 +54,7 @@ class WebSocketServerInstance {
         // TODO: check requestID here is the same
         clearTimeout(id)
         logger.trace(`Websocket: data received '${_ws.data}'`)
+        logger.debug(`Websocket: request ${requestID} fullfilled`)
         return resolve(this.deserializePayload(_ws.data))
       }
 
