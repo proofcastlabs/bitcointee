@@ -1,0 +1,14 @@
+{
+  "port-ws": 3000,
+  "port-rpc": 3030,
+  "light-clients": [{
+    "type": "bitcoin",
+    "host": "btc-node-3.ptokens.io",
+    "port": 8335,
+    "timeout": 30000
+  }],
+  "device": {
+    "id": "8BKX1BBEE",
+    "package": "multiprooflabs.tee"
+  }
+}
