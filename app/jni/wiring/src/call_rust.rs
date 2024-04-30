@@ -8,10 +8,7 @@ use jni::{
     sys::jstring,
     JNIEnv,
 };
-use jni::errors::ErrorKind::JavaException;
-use jni::sys::JNI_ERR;
 use log::error;
-use bitcoin_light_client::BtcError::ParseInt;
 
 #[cfg(feature = "ethereum")]
 use ethereum_light_client::handle_input;
@@ -83,7 +80,7 @@ pub extern "C" fn Java_multiprooflabs_tee_MainActivity_callRust(
                 JObject::null().into_inner()
             }
         },
-        Err(e) => {
+        Err(_) => {
             throw(&env, &format!("Rust code panicked, check logcat for further information!"));
             JObject::null().into_inner()
         }
