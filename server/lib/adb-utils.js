@@ -16,7 +16,7 @@ const getActivityOpts = () => {
   const packageName = getPackageName()
   return ({
     action: 'android.intent.action.MAIN',
-    component: `${packageName}/${packageName}.MainActivity`,
+    component: `${packageName}/${packageName}.MainActivity`
   })
 }
 
@@ -59,9 +59,8 @@ const stopDeviceApp = () =>
   shell(adbClient, getDeviceId(), `am force-stop ${getPackageName}`)
     .then(_ => logger.debug('Activity killed!'))
 
-
 module.exports = {
   getAdbClient,
   stopDeviceApp,
-  startDeviceApp,
+  startDeviceApp
 }

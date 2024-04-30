@@ -8,5 +8,5 @@ module.exports = {
   ERROR_SCHEMA_VALIDATION_FAILED: 'Schema validation failed',
   ERROR_INTERNAL_GENERATE_PROOF: 'Internal: Proof generation failed',
   ERROR_INTERNAL_INVALID_WS_INSTANCE: 'Internal: invalid ws instance',
-  ERROR_SERVER_ERROR: new jsonrpc.JsonRpcError('Server error', -32000),
+  ERROR_SERVER_ERROR: new jsonrpc.JsonRpcError('Server error', -32000)
 }

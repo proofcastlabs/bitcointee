@@ -1,6 +1,6 @@
 const {
   KEY_TYPE,
-  KEY_VALUE,
+  KEY_VALUE
 } = require('./keys')
 
 module.exports = {
@@ -8,15 +8,15 @@ module.exports = {
   type: 'object',
   required: [
     KEY_TYPE,
-    KEY_VALUE,
+    KEY_VALUE
   ],
   properties: {
-    [ KEY_TYPE ]: {
+    [KEY_TYPE]: {
       // TODO: put an enum
       type: 'string'
     },
-    [ KEY_VALUE ]: {
+    [KEY_VALUE]: {
       type: 'object'
     }
-  },
+  }
 }

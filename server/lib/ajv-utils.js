@@ -37,7 +37,7 @@ const validateJsonSyncSchema = R.curry((_validationFunction, _json) =>
 
 const validateJson = R.curry((_schema, _json) =>
   getValidationFunction(_schema).then(_validate =>
-    _schema['$async']
+    _schema.$async
       ? validateJsonAsyncSchema(_validate, _json)
       : validateJsonSyncSchema(_validate, _json)
   )
@@ -45,5 +45,5 @@ const validateJson = R.curry((_schema, _json) =>
 
 module.exports = {
   getValidationFunction,
-  validateJson,
+  validateJson
 }
