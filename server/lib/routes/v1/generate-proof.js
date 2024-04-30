@@ -5,12 +5,13 @@ const { validateJson } = require('../../ajv-utils')
 const { rejectIfNil, rejectIfGt } = require('../../ramda-utils')
 const { jsonRpcSuccess } = require('../../jsonrpc-utils')
 const { verifyAndroidProof } = require('./verify-android-proof')
-const { KEY_VALUE } = require('../../schemas/keys')
+const { KEY_VALUE, KEY_ERROR } = require('../../schemas/keys')
 const {
   ERROR_INVALID_LC_TYPE,
   ERROR_INVALID_BLOCK_NUMBER,
   ERROR_FAILED_TO_PARSE_JSON,
   ERROR_INTERNAL_INVALID_WS_INSTANCE,
+  ERROR_INTERNAL_GENERATE_PROOF,
 } = require('../../errors')
 const { getBlocks } = require('../../get-blocks')
 
@@ -28,7 +29,13 @@ const generateProof = (_wsInstance, _type, _blockNum1, _blockNum2) =>
     .then(x => console.log(JSON.stringify(x)) || x)
     .then(_payload => _wsInstance.send(_payload))
     .then(parseJsonAsync)
-    .then(validateJson(schemas.proof))
+    .then(
+      R.ifElse(
+        R.has('error'),
+        _obj => Promise.reject(new Error(`${ERROR_INTERNAL_GENERATE_PROOF} - ${_obj[KEY_ERROR]}`)),
+        validateJson(schemas.proof)
+      )
+    )
 
 
 module.exports.jsonRpcGenerateProof = (_wsInstance, _req, _res, _next) =>

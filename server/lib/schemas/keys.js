@@ -7,6 +7,7 @@ module.exports = {
   KEY_HOST: 'host',
   KEY_PORT: 'port',
   KEY_TIMEOUT: 'timeout',
+  KEY_ERROR: 'error',
   KEY_LIGHT_CLIENTS: 'light-clients',
   KEY_COMMITMENT: 'commitment',
   KEY_SIGNATURE: 'signature',
