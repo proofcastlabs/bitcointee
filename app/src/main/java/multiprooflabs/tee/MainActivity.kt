@@ -15,6 +15,7 @@ import multiprooflabs.tee.security.TrustedExecutor
 import multiprooflabs.tee.security.Utils.Companion.toBase64String
 import multiprooflabs.tee.security.Utils.Companion.toHexString
 import multiprooflabs.tee.security.Utils.Companion.toJson
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     private external fun callRust(input: String): String
@@ -29,6 +30,17 @@ class MainActivity : AppCompatActivity() {
         System.loadLibrary("wiring")
         this.tee = TrustedExecutor(false)
         Log.i(TAG, "Library loaded")
+    }
+
+    private fun getProof(result: ByteArray): String {
+        val type = tee!!.proofType
+        val commitment = result.toBase64String()
+        val signature = tee!!.signWithAttestationKey(result).toBase64String()
+        val publicKey = tee!!.getAttestationKeyPublicKey().encoded.toBase64String()
+        val certChain = tee!!.getCertificateAttestation().toBase64String()
+        val digest = Utils.getAppSHA256Digest(applicationContext)
+        val value = ProofAndroid(commitment, publicKey, signature, certChain)
+        return Proof(type, value).toJson()
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
@@ -46,27 +58,18 @@ class MainActivity : AppCompatActivity() {
             ) {
                 Log.i(TAG, "Websocket connected")
                 while (true) {
-                    val msg = incoming.receive() as? Frame.Text ?: continue
-                    val txt = msg.readText()
+                    val request = incoming.receive() as? Frame.Text ?: continue
+                    val txt = request.readText()
                     Log.i(TAG, "ws msg: $txt")
-                    val result = callRust("ciao").toByteArray()
-
-                    val type = tee!!.proofType
-                    val commitment = result.toBase64String()
-                    val signature = tee!!.signWithAttestationKey(result).toBase64String()
-                    val publicKey = tee!!.getAttestationKeyPublicKey().encoded.toBase64String()
-                    val certChain = tee!!.getCertificateAttestation().toBase64String()
-
-                    val digest = Utils.getAppSHA256Digest(applicationContext)
-                    Log.i(TAG, "pub key format ${tee!!.getAttestationKeyPublicKey().format}") // HEEERE
-                    Log.i(TAG, "HASH: ${digest.toHexString()}")
-                    Log.i(TAG, "B64 HASH: ${digest.toBase64String()}")
-
-                    val value = ProofAndroid(commitment, publicKey, signature, certChain)
-                    val proof = Proof(type, value)
-
-                    Log.i(TAG, "Sending $result")
-                    send(proof.toJson())
+                    val resp = try {
+                        val result = callRust(txt)
+                        getProof(result.toByteArray())
+                    } catch(e: Exception) {
+                        val errMsg = "callRust failed"
+                        Log.e(TAG,errMsg, e)
+                        "{\"error\": \"$errMsg\"}"
+                    }
+                    send(resp)
                     Log.i(TAG, "Sent!")
                 }
             }
