@@ -25,6 +25,7 @@ const getBlocksFromBtcClient = R.curry(async (_block1, _block2, _client) => {
 })
 
 module.exports.getBtcBlocks = R.curry((_block1, _block2, _lightClientConfig) =>
+  // TODO: put a max for (_block2 - _block1)
   Promise.all([
     _lightClientConfig[KEY_HOST],
     _lightClientConfig[KEY_PORT],
