@@ -1,11 +1,9 @@
 const R = require('ramda')
 const schemas = require('../../schemas')
-const blocks = require('../../../blocks')
 const { validateJson } = require('../../ajv-utils')
 const { rejectIfNil, rejectIfGt } = require('../../ramda-utils')
 const { jsonRpcSuccess } = require('../../jsonrpc-utils')
-const { verifyAndroidProof } = require('./verify-android-proof')
-const { KEY_VALUE, KEY_ERROR } = require('../../schemas/keys')
+const { KEY_ERROR } = require('../../schemas/keys')
 const {
   ERROR_INVALID_LC_TYPE,
   ERROR_INVALID_BLOCK_NUMBER,
@@ -26,7 +24,6 @@ const parseJsonAsync = _jsonStr =>
 
 const generateProof = (_wsInstance, _type, _blockNum1, _blockNum2) =>
   getBlocks(_type, _blockNum1, _blockNum2)
-    .then(x => console.log(JSON.stringify(x)) || x)
     .then(_payload => _wsInstance.send(_payload))
     .then(parseJsonAsync)
     .then(
