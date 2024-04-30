@@ -3,7 +3,7 @@ const {
   KEY_PORT_WS,
   KEY_PORT_RPC,
   KEY_ENDPOINT,
-  KEY_LIGHT_CLIENTS,
+  KEY_LIGHT_CLIENTS
 } = require('./keys')
 
 const lightClient = {
@@ -11,12 +11,12 @@ const lightClient = {
   type: 'object',
   required: [
     KEY_TYPE,
-    KEY_ENDPOINT,
+    KEY_ENDPOINT
   ],
   properties: {
-    [ KEY_TYPE ]: { type: 'string' },
-    [ KEY_ENDPOINT ]: { type: 'string' }
-  },
+    [KEY_TYPE]: { type: 'string' },
+    [KEY_ENDPOINT]: { type: 'string' }
+  }
 }
 
 module.exports = {
@@ -28,14 +28,14 @@ module.exports = {
     KEY_LIGHT_CLIENTS
   ],
   properties: {
-    [ KEY_TYPE ]: {
+    [KEY_TYPE]: {
       // TODO: put an enum
       type: 'string'
     },
-    [ KEY_LIGHT_CLIENTS ]: {
+    [KEY_LIGHT_CLIENTS]: {
       type: 'array',
       minItems: 1,
-      items: lightClient,
+      items: lightClient
     }
-  },
+  }
 }

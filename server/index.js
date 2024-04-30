@@ -30,7 +30,7 @@ const main = () =>
     .then(_ =>
       Promise.all([
         awaitWsInstance(),
-        startDeviceApp(),
+        startDeviceApp()
       ])
     )
     .then(([_ws]) => getApp(_ws))

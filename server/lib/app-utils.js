@@ -1,6 +1,6 @@
 const cors = require('cors')
 const express = require('express')
-const { prop, curry, } = require('ramda')
+const { prop, curry } = require('ramda')
 const { logger } = require('./get-logger')
 const { ERROR_SERVER_ERROR } = require('./errors')
 
@@ -65,5 +65,5 @@ module.exports = {
   addRouterToApp,
   applyRoutesToApp,
   setRequestsLoggingInfo,
-  applyDefaultErrorHandler,
+  applyDefaultErrorHandler
 }

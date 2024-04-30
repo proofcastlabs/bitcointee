@@ -16,10 +16,10 @@ const checkIsValidBlockInterval = ([_block1, _block2]) =>
       Number(_block2)
     )
   )
-  .then(_ => ([_block1, _block2]))
+    .then(_ => ([_block1, _block2]))
 
 const rpcEndpointMapping = {
-  'bitcoin': getBtcBlocks
+  bitcoin: getBtcBlocks
 }
 
 const downloadBlocks = (_type, _block1, _block2) =>
@@ -33,6 +33,6 @@ module.exports.getBlocks = R.curry((_type, _blockNumStr1, _blockNumStr2) =>
     Number(_blockNumStr1),
     Number(_blockNumStr2)
   ])
-  .then(checkIsValidBlockInterval)
-  .then(([_blockNum1, _blockNum2]) => downloadBlocks(_type, _blockNum1, _blockNum2))
+    .then(checkIsValidBlockInterval)
+    .then(([_blockNum1, _blockNum2]) => downloadBlocks(_type, _blockNum1, _blockNum2))
 )

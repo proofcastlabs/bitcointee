@@ -12,13 +12,7 @@ const jsonRpcError = R.curry((_req, _res, _err) =>
 
     let error = jsonrpc.error(id, ERROR_SERVER_ERROR)
 
-    if (_err instanceof jsonrpc.JsonRpcError)
-      error = jsonrpc.error(id, _err)
-    else if (isInternal(_err))
-      error = jsonrpc.error(id, new jsonrpc.JsonRpcError(_err.message, _err.code || null))
-    else
-      logger.error(_err)
-
+    if (_err instanceof jsonrpc.JsonRpcError) { error = jsonrpc.error(id, _err) } else if (isInternal(_err)) { error = jsonrpc.error(id, new jsonrpc.JsonRpcError(_err.message, _err.code || null)) } else { logger.error(_err) }
 
     return resolve(error)
   })
@@ -30,5 +24,5 @@ const jsonRpcSuccess = R.curry((_req, _res, _result) =>
 
 module.exports = {
   jsonRpcError,
-  jsonRpcSuccess,
+  jsonRpcSuccess
 }

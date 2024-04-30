@@ -36,10 +36,9 @@ const rejectIfGt = R.curry((_err, _a, _b) =>
     : Promise.resolve()
 )
 
-
 module.exports = {
   mapAll,
   rejectIfGt,
   importAsync,
-  rejectIfNil,
+  rejectIfNil
 }

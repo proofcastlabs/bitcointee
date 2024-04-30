@@ -14,10 +14,11 @@ const setupExitEventListeners = () =>
         logger.info(`${_signal} caught! Exiting...`)
         return exitCleanly(0)
       })
+      return null
     })
   ).then(_ => logger.debug('Exit listeners set!'))
 
 module.exports = {
   exitCleanly,
-  setupExitEventListeners,
+  setupExitEventListeners
 }

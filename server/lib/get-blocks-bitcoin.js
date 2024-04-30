@@ -5,7 +5,7 @@ const { KEY_HOST, KEY_PORT, KEY_TIMEOUT } = require('./schemas/keys')
 
 const generateBatch = R.curry((_method, _list) =>
   R.reduce(
-    (acc, elem) => R.append({ method: _method, parameters: [elem]}, acc),
+    (acc, elem) => R.append({ method: _method, parameters: [elem] }, acc),
     [],
     _list
   )
@@ -29,8 +29,8 @@ module.exports.getBtcBlocks = R.curry((_block1, _block2, _lightClientConfig) =>
   Promise.all([
     _lightClientConfig[KEY_HOST],
     _lightClientConfig[KEY_PORT],
-    _lightClientConfig[KEY_TIMEOUT],
+    _lightClientConfig[KEY_TIMEOUT]
   ])
-  .then(([host, port, timeout]) => new Client({ host, port, timeout, password: '*', username: '*' }))
-  .then(getBlocksFromBtcClient(_block1, _block2))
+    .then(([host, port, timeout]) => new Client({ host, port, timeout, password: '*', username: '*' }))
+    .then(getBlocksFromBtcClient(_block1, _block2))
 )

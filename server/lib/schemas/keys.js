@@ -15,5 +15,5 @@ module.exports = {
   KEY_CERTIFICATECHAIN: 'certificateChain',
   KEY_ID: 'id',
   KEY_DEVICE: 'device',
-  KEY_PACKAGE_NAME: 'package',
+  KEY_PACKAGE_NAME: 'package'
 }
