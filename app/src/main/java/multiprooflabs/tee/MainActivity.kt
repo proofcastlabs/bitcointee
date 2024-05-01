@@ -14,6 +14,7 @@ import multiprooflabs.tee.data.ProofAndroidValue
 import multiprooflabs.tee.security.Utils
 import multiprooflabs.tee.security.TrustedExecutor
 import multiprooflabs.tee.security.Utils.Companion.toBase64String
+import multiprooflabs.tee.security.Utils.Companion.toHexString
 import multiprooflabs.tee.security.Utils.Companion.toJson
 import java.lang.Exception
 
@@ -34,10 +35,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun getProof(result: ByteArray): String {
         val type = tee!!.proofType
-        val commitment = result.toBase64String()
-        val signature = tee!!.signWithAttestationKey(result).toBase64String()
-        val publicKey = tee!!.getAttestationKeyPublicKey().encoded.toBase64String()
-        val certChain = tee!!.getCertificateAttestation().toBase64String()
+        val commitment = result.toHexString()
+        val signature = tee!!.signWithAttestationKey(result).toHexString()
+        val publicKey = tee!!.getAttestationKeyPublicKey().encoded.toHexString()
+        val certChain = tee!!.getCertificateAttestation().toHexString()
         val value = ProofAndroidValue(commitment, publicKey, signature, certChain)
         val proof = ProofAndroid(type, value)
         return Proof(commitment, proof).toJson()
