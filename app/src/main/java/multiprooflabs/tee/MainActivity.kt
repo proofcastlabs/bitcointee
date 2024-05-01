@@ -1,5 +1,7 @@
 package multiprooflabs.tee
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import kotlinx.coroutines.runBlocking
@@ -17,29 +19,37 @@ import multiprooflabs.tee.security.Utils.Companion.toBase64String
 import multiprooflabs.tee.security.Utils.Companion.toHexString
 import multiprooflabs.tee.security.Utils.Companion.toJson
 import java.lang.Exception
+import java.security.Security
 
 class MainActivity : AppCompatActivity() {
     private external fun callRust(input: String): String
 
+    private val isStrongboxBacked = false
     private var client: HttpClient? = null
     private var tee: TrustedExecutor? = null
-
 
     val TAG = "[Main]"
 
     init {
         System.loadLibrary("wiring")
-        this.tee = TrustedExecutor(false)
         Log.i(TAG, "Library loaded")
     }
 
     private fun getProof(result: ByteArray): String {
+        Log.d(TAG, "Getting proof, address: ${tee!!.getAddress().toHexString()}")
         val type = tee!!.proofType
         val commitment = result.toHexString()
-        val signature = tee!!.signWithAttestationKey(result).toHexString()
-        val publicKey = tee!!.getAttestationKeyPublicKey().encoded.toHexString()
+        val signature = tee!!.signWithSecp256k1PrivateKey(result).toHexString()
+        val publicKey = tee!!.getSecp256k1PublicKey().toHexString()
+        val attestedPublicKey = tee!!.getSecp256k1Attestation().toHexString()
         val certChain = tee!!.getCertificateAttestation().toHexString()
-        val value = ProofAndroidValue(commitment, publicKey, signature, certChain)
+        val value = ProofAndroidValue(
+            commitment,
+            publicKey,
+            attestedPublicKey,
+            signature,
+            certChain
+        )
         val proof = ProofAndroid(type, value)
         return Proof(commitment, proof).toJson()
     }
@@ -49,6 +59,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val db = getPreferences(Context.MODE_PRIVATE)
+        tee = TrustedExecutor(db, isStrongboxBacked)
         client = HttpClient { install(WebSockets) }
 
         runBlocking {

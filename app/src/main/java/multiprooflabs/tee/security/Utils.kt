@@ -7,6 +7,7 @@ import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import multiprooflabs.tee.data.Proof
+import org.apache.commons.codec.binary.Hex
 import java.io.FileInputStream
 import java.security.DigestInputStream
 import java.security.MessageDigest
@@ -25,15 +26,13 @@ class Utils {
             return messageDigest.digest()
         }
 
-        @ExperimentalUnsignedTypes
-        fun ByteArray.toHexString(): String = asUByteArray().joinToString("") {
-            it.toString(radix = 16).padStart(2, '0')
-        }
+        fun ByteArray.toHexString(): String = Hex.encodeHexString(this)
+
+        fun String.fromHexString(): ByteArray = Hex.decodeHex(this)
 
         fun ByteArray.toBase64String(): String = Base64.encodeToString(this, Base64.NO_WRAP)
 
         fun Proof.toJson(): String = Json.encodeToString(this)
-
         fun AttestationCertificate.toJson(): String = Json.encodeToString(this)
         fun AttestationCertificate.toCbor(): ByteArray = Cbor.encodeToByteArray(this)
     }
