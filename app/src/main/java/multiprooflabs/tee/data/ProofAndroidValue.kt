@@ -1,8 +1,8 @@
-package multiprooflabs.tee.security
+package multiprooflabs.tee.data
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProofAndroid(
+data class ProofAndroidValue(
     val commitment: String,
     val signature: String,
     val publicKey: String,
