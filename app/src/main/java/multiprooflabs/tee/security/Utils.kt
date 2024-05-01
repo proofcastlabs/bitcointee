@@ -2,13 +2,11 @@ package multiprooflabs.tee.security
 
 import android.content.Context
 import android.util.Base64
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory
 import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.io.ByteArrayOutputStream
+import multiprooflabs.tee.data.Proof
 import java.io.FileInputStream
 import java.security.DigestInputStream
 import java.security.MessageDigest
