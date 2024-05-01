@@ -36,8 +36,18 @@ pub fn validate_input(s: String) -> Result<String, BtcError> {
     if !result {
         Err(BtcError::ValidationError)
     } else {
-        let last_block_hash = blocks.last().ok_or_else(|| BtcError::NoLastBlock)?.header.block_hash();
-        Ok(last_block_hash.to_string())
+        let first_block_hash = blocks.last()
+            .ok_or_else(|| BtcError::NoFirstBlock)?
+            .header
+            .block_hash();
+        let last_block_hash = blocks.last()
+            .ok_or_else(|| BtcError::NoLastBlock)?
+            .header
+            .block_hash();
+        let output = first_block_hash.to_string() +
+            &last_block_hash.to_string();
+
+        Ok(output)
     }
 }
 

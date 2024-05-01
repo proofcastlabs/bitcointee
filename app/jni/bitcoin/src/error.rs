@@ -2,6 +2,9 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum BtcError {
+    #[error("no first block in blocks")]
+    NoFirstBlock,
+
     #[error("no last block in blocks")]
     NoLastBlock,
 
