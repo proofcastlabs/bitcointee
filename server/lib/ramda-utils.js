@@ -24,14 +24,13 @@ const mapAll = R.curry((_promiseFn, _list) =>
 
 const importAsync = R.memoizeWith(R.identity, async (_lib, _name) => {
   const lib = await import(_lib)
-  console.log(lib)
   return ({
     [_name]: lib
   })
 })
 
 const rejectIfGt = R.curry((_err, _a, _b) =>
-  R.gt(_a, _b)
+  R.lte(_b, _a)
     ? Promise.reject(createErrorFromAnything(_err))
     : Promise.resolve()
 )
