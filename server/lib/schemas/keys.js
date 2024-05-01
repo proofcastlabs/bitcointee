@@ -1,5 +1,6 @@
 module.exports = {
   KEY_TYPE: 'type',
+  KEY_PROOF: 'proof',
   KEY_VALUE: 'value',
   KEY_PORT_WS: 'port-ws',
   KEY_PORT_RPC: 'port-rpc',
@@ -10,6 +11,7 @@ module.exports = {
   KEY_ERROR: 'error',
   KEY_LIGHT_CLIENTS: 'light-clients',
   KEY_COMMITMENT: 'commitment',
+  KEY_STATEMENT: 'statement',
   KEY_SIGNATURE: 'signature',
   KEY_PUBLICKEY: 'publicKey',
   KEY_CERTIFICATECHAIN: 'certificateChain',

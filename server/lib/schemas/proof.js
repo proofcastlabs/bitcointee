@@ -1,22 +1,12 @@
-const {
-  KEY_TYPE,
-  KEY_VALUE
-} = require('./keys')
+const { KEY_PROOF, KEY_STATEMENT } = require('./keys')
+const proofAndroid = require('./proof-android')
 
 module.exports = {
   $async: true,
   type: 'object',
-  required: [
-    KEY_TYPE,
-    KEY_VALUE
-  ],
+  required: [KEY_PROOF, KEY_STATEMENT],
   properties: {
-    [KEY_TYPE]: {
-      // TODO: put an enum
-      type: 'string'
-    },
-    [KEY_VALUE]: {
-      type: 'object'
-    }
+    [KEY_PROOF]: proofAndroid,
+    [KEY_STATEMENT]: { type: 'string' }
   }
 }

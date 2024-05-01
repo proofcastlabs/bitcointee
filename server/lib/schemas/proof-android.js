@@ -1,31 +1,12 @@
-const {
-  KEY_COMMITMENT,
-  KEY_SIGNATURE,
-  KEY_PUBLICKEY,
-  KEY_CERTIFICATECHAIN
-} = require('./keys')
+const { KEY_TYPE, KEY_VALUE } = require('./keys')
+const proofAndroidValue = require('./proof-android-value')
 
 module.exports = {
   $async: true,
   type: 'object',
-  required: [
-    // KEY_COMMITMENT,
-    KEY_SIGNATURE,
-    KEY_PUBLICKEY,
-    KEY_CERTIFICATECHAIN
-  ],
+  required: [KEY_TYPE, KEY_VALUE],
   properties: {
-    [KEY_COMMITMENT]: {
-      type: 'string'
-    },
-    [KEY_SIGNATURE]: {
-      type: 'string'
-    },
-    [KEY_PUBLICKEY]: {
-      type: 'string'
-    },
-    [KEY_CERTIFICATECHAIN]: {
-      type: 'string'
-    }
+    [KEY_TYPE]: { type: 'string' },
+    [KEY_VALUE]: proofAndroidValue
   }
 }
