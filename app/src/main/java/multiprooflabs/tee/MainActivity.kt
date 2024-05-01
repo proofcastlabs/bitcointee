@@ -8,12 +8,12 @@ import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.websocket.*
-import multiprooflabs.tee.security.ProofAndroid
-import multiprooflabs.tee.security.Proof
+import multiprooflabs.tee.data.ProofAndroid
+import multiprooflabs.tee.data.Proof
+import multiprooflabs.tee.data.ProofAndroidValue
 import multiprooflabs.tee.security.Utils
 import multiprooflabs.tee.security.TrustedExecutor
 import multiprooflabs.tee.security.Utils.Companion.toBase64String
-import multiprooflabs.tee.security.Utils.Companion.toHexString
 import multiprooflabs.tee.security.Utils.Companion.toJson
 import java.lang.Exception
 
@@ -38,9 +38,9 @@ class MainActivity : AppCompatActivity() {
         val signature = tee!!.signWithAttestationKey(result).toBase64String()
         val publicKey = tee!!.getAttestationKeyPublicKey().encoded.toBase64String()
         val certChain = tee!!.getCertificateAttestation().toBase64String()
-        val digest = Utils.getAppSHA256Digest(applicationContext)
-        val value = ProofAndroid(commitment, publicKey, signature, certChain)
-        return Proof(type, value).toJson()
+        val value = ProofAndroidValue(commitment, publicKey, signature, certChain)
+        val proof = ProofAndroid(type, value)
+        return Proof(commitment, proof).toJson()
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
