@@ -17,6 +17,7 @@ import multiprooflabs.tee.security.Utils.Companion.toHexString
 import multiprooflabs.tee.security.Utils.Companion.toJson
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {
     private external fun callRust(input: String): String
@@ -36,7 +37,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Getting proof using address: ${tee!!.getAddress().toHexString()}")
         val type = tee!!.proofType
         val statement = result.toString(StandardCharsets.UTF_8)
-        val commitment = tee!!.getEIP191SignedData(result)
+        val sha256 = MessageDigest.getInstance("SHA-256")
+        val commitment = sha256.digest(result)
         val signature = tee!!.signWithSecp256k1PrivateKey(commitment).toHexString()
         val publicKey = tee!!.getSecp256k1PublicKey().toHexString()
         val attestedPublicKey = tee!!.getSecp256k1Attestation().toHexString()

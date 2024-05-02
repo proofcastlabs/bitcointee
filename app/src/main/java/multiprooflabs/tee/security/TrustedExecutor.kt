@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets
 import java.security.Key
 import java.security.KeyPairGenerator
 import java.security.KeyStore
+import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.SecureRandom
@@ -134,12 +135,12 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
         keccak256.update(message)
         return keccak256.digest()
     }
-    fun signWithSecp256k1PrivateKey(commitment: ByteArray): ByteArray {
+    fun signWithSecp256k1PrivateKey(message: ByteArray): ByteArray {
         val privateKey = BigInteger(decrypt(db.getString(PREFERENCES_PRIVATE_KEY, null)!!.fromHexString()))
         val publicKey = Sign.publicKeyFromPrivate(privateKey)
         val keyPair = ECKeyPair(privateKey, publicKey)
         val needToHash = false
-        val signature = Sign.signMessage(commitment, keyPair, needToHash)
+        val signature = Sign.signMessage(message, keyPair, needToHash)
 
         return signature.r
             .plus(signature.s)

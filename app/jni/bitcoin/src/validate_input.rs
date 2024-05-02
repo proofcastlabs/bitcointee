@@ -36,7 +36,7 @@ pub fn validate_input(s: String) -> Result<String, BtcError> {
     if !result {
         Err(BtcError::ValidationError)
     } else {
-        let first_block_hash = blocks.last()
+        let first_block_hash = blocks.first()
             .ok_or_else(|| BtcError::NoFirstBlock)?
             .header
             .block_hash();
