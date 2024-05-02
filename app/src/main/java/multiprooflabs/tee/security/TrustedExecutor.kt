@@ -1,22 +1,28 @@
 package multiprooflabs.tee.security
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyInfo
 import android.security.keystore.KeyProperties
 import android.util.Log
-import fr.acinq.secp256k1.Secp256k1
-import io.ktor.network.tls.extensions.HashAlgorithm
 import multiprooflabs.tee.security.Utils.Companion.fromHexString
 import multiprooflabs.tee.security.Utils.Companion.toCbor
 import multiprooflabs.tee.security.Utils.Companion.toHexString
+import org.bouncycastle.asn1.x9.ECNamedCurveTable
+import org.bouncycastle.crypto.generators.ECKeyPairGenerator
+
+import org.bouncycastle.crypto.params.ECDomainParameters
+import org.bouncycastle.crypto.params.ECKeyGenerationParameters
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters
+import org.bouncycastle.crypto.params.ECPublicKeyParameters
 import org.bouncycastle.jcajce.provider.digest.Keccak
+import org.web3j.crypto.ECKeyPair
+import org.web3j.crypto.Sign
+import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.security.Key
 import java.security.KeyPairGenerator
 import java.security.KeyStore
-import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.SecureRandom
@@ -31,12 +37,12 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
     private val TAG = this.javaClass.name
     private val ETHEREUM_MSG_PREFIX = byteArrayOf(25)
             .plus("Ethereum Signed Message:\n".toByteArray())
-            .plus(32)
     private val androidKeyStore = "AndroidKeyStore"
-    private val aliasAttestationKey = "multiprooflabs.ecdsa"
-    private val aliasSecretKey = "multiprooflabs.aes"
-    private val PREF_KEY_SK = "secretKey"
-    private val PREF_KEY_PK = "publicKey"
+    private val ALIAS_ANDROID_ATTESTATION_KEY = "multiprooflabs.ecdsa"
+    private val ALIAS_ANDROID_SECRET_KEY = "multiprooflabs.aes"
+    private val PREFIX_SECP256K1_KEY = "multiprooflabs.secp256k1"
+    private val PREFERENCES_PRIVATE_KEY = "$PREFIX_SECP256K1_KEY.PrivateKey"
+    private val PREFERENCES_PUBLIC_KEY = "$PREFIX_SECP256K1_KEY.PublicKey"
     private val CIPHER_TRANSFORMATION = "AES/GCM/NoPadding"
 
     val pubKey = null
@@ -70,7 +76,6 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
     }
 
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun generateSecretKey(alias: String) {
         val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, androidKeyStore)
         val purposes = KeyProperties.PURPOSE_ENCRYPT.or(KeyProperties.PURPOSE_DECRYPT)
@@ -91,47 +96,74 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
         generateSecp256k1Key()
     }
 
-    fun generateSecp256k1Key(secretKeyAlias: String = aliasSecretKey) {
-        Log.i(TAG, "Generating secp256k1 key...")
+    fun generateSecp256k1Key() {
+            val curve = ECNamedCurveTable.getByName("secp256k1")
+            val domainParams = ECDomainParameters(
+                curve.curve,
+                curve.g,
+                curve.n,
+                curve.h,
+                curve.seed
+            )
 
-        // Generate secp256k1
-        val secureRandom = SecureRandom()
-        val privKey = ByteArray(32)
-        secureRandom.nextBytes(privKey)
-        // Write to shared preferences
-        val pubKey = Secp256k1.pubkeyCreate(privKey)
-        with (db.edit()) {
-            putString(PREF_KEY_SK, encrypt(privKey, secretKeyAlias).toHexString())
-            putString(PREF_KEY_PK, pubKey.toHexString())
-            commit()
-        }
+            val secureRandom = SecureRandom()
+            val keyParams = ECKeyGenerationParameters(domainParams, secureRandom)
+            val generator = ECKeyPairGenerator()
+            generator.init(keyParams)
+            val keyPair = generator.generateKeyPair()
+
+            val privateKey = keyPair.private as ECPrivateKeyParameters
+            val publicKey = keyPair.public as ECPublicKeyParameters
+
+            with (db.edit()) {
+                val encryptedPrivateKey = encrypt(privateKey.d.toByteArray()).toHexString()
+                val clearPublicKey = publicKey.q.getEncoded(false).toHexString()
+                putString(PREFERENCES_PRIVATE_KEY, encryptedPrivateKey)
+                putString(PREFERENCES_PUBLIC_KEY, clearPublicKey)
+                commit()
+            }
+        Log.i(TAG,"New secp256k1 key pair stored successfully into app preferences")
     }
 
     fun getSecp256k1PublicKey(): ByteArray {
-        return db.getString(PREF_KEY_PK, null)!!.fromHexString()
+        return db.getString(PREFERENCES_PUBLIC_KEY, null)!!.fromHexString()
     }
 
-    private fun keccak256(message: ByteArray): ByteArray {
+    fun keccak256(message: ByteArray): ByteArray {
         val keccak256 = Keccak.Digest256()
         keccak256.update(message)
         return keccak256.digest()
     }
-    fun signWithSecp256k1PrivateKey(message: ByteArray, secretKeyAlias: String = aliasSecretKey): ByteArray {
-        val sk = decrypt(db.getString(PREF_KEY_SK, null)!!.fromHexString())
+    fun signWithSecp256k1PrivateKey(commitment: ByteArray): ByteArray {
+        val privateKey = BigInteger(decrypt(db.getString(PREFERENCES_PRIVATE_KEY, null)!!.fromHexString()))
+        val publicKey = Sign.publicKeyFromPrivate(privateKey)
+        val keyPair = ECKeyPair(privateKey, publicKey)
+        val needToHash = false
+        val signature = Sign.signMessage(commitment, keyPair, needToHash)
 
+        return signature.r
+            .plus(signature.s)
+            .plus(signature.v)
+    }
 
-        val hashedMessage = keccak256(ETHEREUM_MSG_PREFIX.plus(keccak256(message)))
-        return Secp256k1.sign(hashedMessage, sk)
+    fun getEIP191SignedData(data: ByteArray): ByteArray {
+        val dataLength = data.size.toString().toByteArray()
+        return keccak256(
+            ETHEREUM_MSG_PREFIX
+                .plus(dataLength)
+                .plus(data)
+        )
     }
 
     fun getAddress(): ByteArray {
         val pubKey = getSecp256k1PublicKey()
-        val hash = keccak256(pubKey)
-        return hash.sliceArray(IntRange(0, 19))
+        val pubKeyWithoutPrefix = pubKey.sliceArray(IntRange(1, pubKey.size - 1))
+        val hash = keccak256(pubKeyWithoutPrefix)
+        return hash.sliceArray(IntRange(hash.size - 20, hash.size - 1))
     }
 
-    fun getSecp256k1Attestation(secretKeyAlias: String = aliasSecretKey): ByteArray {
-        val pubKey = db.getString(PREF_KEY_PK, null)!!.fromHexString()
+    fun getSecp256k1Attestation(): ByteArray {
+        val pubKey = db.getString(PREFERENCES_PUBLIC_KEY, null)!!.fromHexString()
         return signWithAttestationKey(pubKey)
     }
 
@@ -140,7 +172,7 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
         return ks.getKey(alias, null)
     }
 
-    private fun encrypt(data: ByteArray, alias: String = aliasSecretKey): ByteArray {
+    private fun encrypt(data: ByteArray, alias: String = ALIAS_ANDROID_SECRET_KEY): ByteArray {
         val key = getSecretKey(alias)
         val cipher = Cipher.getInstance(CIPHER_TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, key)
@@ -155,7 +187,7 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
         return result
     }
 
-    private fun decrypt(data: ByteArray, alias: String = aliasSecretKey): ByteArray {
+    private fun decrypt(data: ByteArray, alias: String = ALIAS_ANDROID_SECRET_KEY): ByteArray {
         val key = getSecretKey(alias)
         val iv = ByteArray(12)
         val encryptedData = ByteArray(data.size - iv.size)
@@ -172,7 +204,7 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
         return cipher.doFinal(encryptedData)
     }
 
-    private fun maybeGenerateSecretKey(alias: String = aliasSecretKey) {
+    private fun maybeGenerateSecretKey(alias: String = ALIAS_ANDROID_SECRET_KEY) {
         val ks = KeyStore.getInstance(androidKeyStore)
             .apply { load(null) }
         if (!ks.containsAlias(alias)) {
@@ -180,7 +212,7 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
         }
     }
 
-    private fun maybeGenerateSigningKey(alias: String = aliasAttestationKey): KeyStore {
+    private fun maybeGenerateSigningKey(alias: String = ALIAS_ANDROID_ATTESTATION_KEY): KeyStore {
         val ks = KeyStore.getInstance(androidKeyStore).apply { load(null) }
 
         if (!ks.containsAlias(alias)) {
@@ -225,9 +257,9 @@ class TrustedExecutor(private val db: SharedPreferences, private val isStrongbox
         return AttestationCertificate(leaf, intermediate, root).toCbor()
     }
 
-    fun getAttestationKeyPublicKey() = getPublicKey(aliasAttestationKey)
-    fun getCertificateAttestation() = getCertificateAttestation(aliasAttestationKey)
-    fun signWithAttestationKey(data: ByteArray) = sign(aliasAttestationKey, data)
+    fun getAttestationKeyPublicKey() = getPublicKey(ALIAS_ANDROID_ATTESTATION_KEY)
+    fun getCertificateAttestation() = getCertificateAttestation(ALIAS_ANDROID_ATTESTATION_KEY)
+    fun signWithAttestationKey(data: ByteArray) = sign(ALIAS_ANDROID_ATTESTATION_KEY, data)
 
 
 }

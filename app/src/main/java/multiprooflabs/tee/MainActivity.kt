@@ -1,7 +1,6 @@
 package multiprooflabs.tee
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import kotlinx.coroutines.runBlocking
@@ -13,13 +12,11 @@ import io.ktor.websocket.*
 import multiprooflabs.tee.data.ProofAndroid
 import multiprooflabs.tee.data.Proof
 import multiprooflabs.tee.data.ProofAndroidValue
-import multiprooflabs.tee.security.Utils
 import multiprooflabs.tee.security.TrustedExecutor
-import multiprooflabs.tee.security.Utils.Companion.toBase64String
 import multiprooflabs.tee.security.Utils.Companion.toHexString
 import multiprooflabs.tee.security.Utils.Companion.toJson
 import java.lang.Exception
-import java.security.Security
+import java.nio.charset.StandardCharsets
 
 class MainActivity : AppCompatActivity() {
     private external fun callRust(input: String): String
@@ -36,22 +33,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getProof(result: ByteArray): String {
-        Log.d(TAG, "Getting proof, address: ${tee!!.getAddress().toHexString()}")
+        Log.d(TAG, "Getting proof using address: ${tee!!.getAddress().toHexString()}")
         val type = tee!!.proofType
-        val commitment = result.toHexString()
-        val signature = tee!!.signWithSecp256k1PrivateKey(result).toHexString()
+        val statement = result.toString(StandardCharsets.UTF_8)
+        val commitment = tee!!.getEIP191SignedData(result)
+        val signature = tee!!.signWithSecp256k1PrivateKey(commitment).toHexString()
         val publicKey = tee!!.getSecp256k1PublicKey().toHexString()
         val attestedPublicKey = tee!!.getSecp256k1Attestation().toHexString()
         val certChain = tee!!.getCertificateAttestation().toHexString()
         val value = ProofAndroidValue(
-            commitment,
+            commitment.toHexString(),
+            signature,
             publicKey,
             attestedPublicKey,
-            signature,
             certChain
         )
         val proof = ProofAndroid(type, value)
-        return Proof(commitment, proof).toJson()
+        return Proof(statement, proof).toJson()
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
@@ -73,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                 while (true) {
                     val request = incoming.receive() as? Frame.Text ?: continue
                     val txt = request.readText()
-                    Log.i(TAG, "ws msg: $txt")
                     val resp = try {
                         val result = callRust(txt)
                         getProof(result.toByteArray())
