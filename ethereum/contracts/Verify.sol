@@ -6,9 +6,11 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract Verify is Ownable {
   event Step(bytes);
+  event NewTeeSigner(bytes, bytes);
 
   address public teeAddress;
   bytes public lastBlockHash;
+  bytes public attestation;
 
   constructor(bytes memory genesisBlockHash)
     Ownable(msg.sender) {
@@ -16,8 +18,11 @@ contract Verify is Ownable {
     lastBlockHash = genesisBlockHash;
   }
 
-  function setTeeSigner(bytes calldata pubKey) public onlyOwner {
+  function setTeeSigner(bytes calldata pubKey, bytes memory attestation_) public onlyOwner {
     teeAddress = _getAddressFromPublicKey(pubKey);
+    attestation = attestation_;
+
+    emit NewTeeSigner(pubKey, attestation);
   }
 
   function step(bytes calldata statement, bytes calldata signature) public {

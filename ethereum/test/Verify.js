@@ -2,6 +2,9 @@ const R = require('ramda')
 const sample = require('./samples/proof.json')
 const { expect } = require("chai")
 
+const zeroXed = _str =>
+  R.concat('0x', R.replace('0x', '', _str))
+
 describe('Verify.sol tests', () => {
   const genesisBlockHash = sample.statement.slice(0, 64)
   const genesisBlockHashBytes = ethers.getBytes(Buffer.from(genesisBlockHash))
@@ -12,7 +15,10 @@ describe('Verify.sol tests', () => {
   before(async () => {
     const Verify = await ethers.getContractFactory('Verify')
     verify = await Verify.deploy(genesisBlockHashBytes)
-    await verify.setTeeSigner('0x' + sample.proof.value.publicKey)
+    await verify.setTeeSigner(
+      zeroXed(sample.proof.value.publicKey),
+      zeroXed(sample.proof.value.attestedPublicKey)
+    )
   })
 
   it('Should verify the proof correctly', async () => {
