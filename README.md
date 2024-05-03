@@ -1,4 +1,4 @@
-# TEE prover
+# Android TEE light client
 
 This is a PoC showing a bitcoin light client running on TEEs found
 on commercial Android devices.
