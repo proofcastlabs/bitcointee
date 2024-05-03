@@ -1,3 +1,5 @@
+const { logger } = require('./get-logger')
+
 module.exports.sleepForXMilliseconds = _milliseconds =>
   new Promise(resolve => {
     logger.info(`Sleeping for ${_milliseconds}ms...`)

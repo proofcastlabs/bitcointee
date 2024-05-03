@@ -1,17 +1,18 @@
 const R = require('ramda')
 const jsonrpc = require('jsonrpc-lite')
+const { logger } = require('./get-logger')
+const { ERROR_SERVER_ERROR } = require('./errors')
 
-const ERROR_SERVER_ERROR = new jsonrpc.JsonRpcError('Server error', -32000)
-
+const isInternal = _err =>
+  R.has('message', _err) && !R.startsWith('Internal', _err.message)
 
 const jsonRpcError = R.curry((_req, _res, _err) =>
   new Promise(resolve => {
     const id = _req.body.id ? _req.body.id : 0
-    const error = _err instanceof jsonrpc.JsonRpcError
-      ? jsonrpc.error(id, _err)
-      : R.has('message', _err)
-        ? jsonrpc.error(id, new jsonrpc.JsonRpcError(_err.message, _err.code || null))
-        : jsonrpc.error(id, ERROR_SERVER_ERROR)
+
+    let error = jsonrpc.error(id, ERROR_SERVER_ERROR)
+
+    if (_err instanceof jsonrpc.JsonRpcError) { error = jsonrpc.error(id, _err) } else if (isInternal(_err)) { error = jsonrpc.error(id, new jsonrpc.JsonRpcError(_err.message, _err.code || null)) } else { logger.error(_err) }
 
     return resolve(error)
   })
@@ -23,5 +24,5 @@ const jsonRpcSuccess = R.curry((_req, _res, _result) =>
 
 module.exports = {
   jsonRpcError,
-  jsonRpcSuccess,
+  jsonRpcSuccess
 }

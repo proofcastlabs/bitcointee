@@ -3,12 +3,12 @@ const { WebSocketServer } = require('ws')
 const { logger } = require('./get-logger')
 
 class WebSocketServerInstance {
-  constructor(port, wsTimeout = 5000) {
+  constructor (port, wsTimeout = 5000) {
     this.timeout = wsTimeout
     this.wss = new WebSocketServer({ port })
   }
 
-  createConnection(_onCloseHandler, _onErrorHandler) {
+  createConnection (_onCloseHandler, _onErrorHandler) {
     return new Promise(resolve => {
       logger.info('Websocket: awaiting connection from device')
       this.wss.on('connection', _ws => {
@@ -22,14 +22,14 @@ class WebSocketServerInstance {
     })
   }
 
-  getRequestId() {
+  getRequestId () {
     const max = 0xFFFFFFFFFFFF
     return Math.floor(Math.random() * Math.floor(max)).toString()
   }
 
-  serializePayload(_payload) {
+  serializePayload (_payload) {
     // TODO: cbor?
-    switch(R.type(_payload)) {
+    switch (R.type(_payload)) {
       case 'String':
         return _payload
       default:
@@ -37,12 +37,12 @@ class WebSocketServerInstance {
     }
   }
 
-  deserializePayload(_payload) {
+  deserializePayload (_payload) {
     // TODO: cbor?
     return R.identity(_payload)
   }
 
-  send(_payload) {
+  send (_payload) {
     return new Promise((resolve, reject) => {
       const payload = this.serializePayload(_payload)
       const requestID = this.getRequestId()
@@ -54,6 +54,7 @@ class WebSocketServerInstance {
         // TODO: check requestID here is the same
         clearTimeout(id)
         logger.trace(`Websocket: data received '${_ws.data}'`)
+        logger.debug(`Websocket: request ${requestID} fullfilled`)
         return resolve(this.deserializePayload(_ws.data))
       }
 
@@ -65,6 +66,5 @@ class WebSocketServerInstance {
     })
   }
 }
-
 
 module.exports = WebSocketServerInstance

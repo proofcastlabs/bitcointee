@@ -39,4 +39,6 @@ keystore*
 *.gpg
 !gradle/wrapper/*.jar
 
+/rust/target
 
+.nx

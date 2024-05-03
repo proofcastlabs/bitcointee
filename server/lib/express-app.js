@@ -3,7 +3,7 @@ const {
   setBodyParser,
   addRouterToApp,
   setRequestsLoggingInfo,
-  applyDefaultErrorHandler,
+  applyDefaultErrorHandler
 } = require('./app-utils')
 const express = require('express')
 const { getRoutes } = require('./routes/v1/get-routes')

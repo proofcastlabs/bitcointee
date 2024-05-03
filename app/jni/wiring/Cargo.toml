@@ -1,0 +1,27 @@
+[package]
+name = "wiring"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Greg Kapka <gregkapka@gmail.com>, " ]
+description = "The java entry point for tee-based light clients"
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+file-logger = ["file_logger"] # Enables file logging
+bitcoin = [ "bitcoin_light_client" ]
+ethereum = [ "ethereum_light_client" ]
+
+[dependencies]
+jni = "0.14.0"
+android_logger = "0.13.3"
+log = { workspace = true }
+hex = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+serde_json = { workspace= true }
+derive-getters = { workspace = true }
+file_logger = { path = "../file_logger", optional = true }
+bitcoin_light_client = { package = "bitcoin",  path = "../bitcoin", optional = true }
+ethereum_light_client = { package = "ethereum",  path = "../ethereum", optional = true }

@@ -17,6 +17,27 @@ const rejectIfNil = R.curry((_err, _thing) =>
     : Promise.resolve(_thing)
 )
 
+const mapAll = R.curry((_promiseFn, _list) =>
+  Promise.resolve(R.type(_list) === 'Array' ? _list : [_list])
+    .then(_ => Promise.all(_list.map(_promiseFn)))
+)
+
+const importAsync = R.memoizeWith(R.identity, async (_lib, _name) => {
+  const lib = await import(_lib)
+  return ({
+    [_name]: lib
+  })
+})
+
+const rejectIfGt = R.curry((_err, _a, _b) =>
+  R.lte(_b, _a)
+    ? Promise.reject(createErrorFromAnything(_err))
+    : Promise.resolve()
+)
+
 module.exports = {
+  mapAll,
+  rejectIfGt,
+  importAsync,
   rejectIfNil
 }

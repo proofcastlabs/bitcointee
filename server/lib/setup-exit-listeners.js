@@ -1,9 +1,10 @@
-const config = require('../config')
+const { stopDeviceApp } = require('./adb-utils')
 const { logger, shutDownLogging } = require('./get-logger')
 
 const exitCleanly = _exitCode =>
   logger.info('Clean exit...') ||
-  shutDownLogging()
+  stopDeviceApp()
+    .then(_ => shutDownLogging())
     .then(_ => process.exit(_exitCode))
 
 const setupExitEventListeners = () =>
@@ -13,10 +14,11 @@ const setupExitEventListeners = () =>
         logger.info(`${_signal} caught! Exiting...`)
         return exitCleanly(0)
       })
+      return null
     })
   ).then(_ => logger.debug('Exit listeners set!'))
 
 module.exports = {
   exitCleanly,
-  setupExitEventListeners,
+  setupExitEventListeners
 }

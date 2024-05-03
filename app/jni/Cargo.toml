@@ -1,12 +1,17 @@
-[package]
-name = "wiring"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+resolver = "2"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+members = [
+    "file_logger", "wiring", "bitcoin", "ethereum",
+]
 
-[dependencies]
-jni = "0.21.1"
-
-[lib]
-crate_type = ["staticlib", "dylib"]
+[workspace.dependencies]
+hex = "0.4.3"
+log = "0.4.14"
+thiserror = "1.0.40"
+quick-error = "2.0.1"
+lazy_static = "1.4.0"
+serde_json = "1.0.68"
+derive_more = "0.99.16"
+derive-getters = "0.3.0"
+serde = { version = "1.0.130", features = ["derive"] }
