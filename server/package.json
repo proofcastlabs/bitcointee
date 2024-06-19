@@ -23,7 +23,7 @@
     "log4js": "^6.9.1",
     "ramda": "^0.29.1",
     "secp256r1": "^0.0.3",
-    "ws": "^8.16.0"
+    "ws": "^8.17.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.2",
